@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Unit-Ural</string>
+
+    <!--NAVIGATION-->
+    <string name="title_projects">Проекты</string>
+    <string name="title_news">Новости</string>
+    <string name="title_calendar">Календарь</string>
+    <string name="title_settings">Настройки</string>
+
+    <!--USUAL WORDS-->
+    <string name="repeat">Повторить</string>
+    <string name="data_fetch_error">Ошибка при загрузке данных</string>
+
+    <!--FEED LENT-->
+    <string name="unit_ural"> Юн-IT Урал</string>
+
+</resources>
