@@ -1,4 +1,4 @@
-package trelico.ru.unitUral.dataSources.web;
+package trelico.ru.unitUral.dataProviders.web;
 
 import java.util.List;
 
@@ -16,9 +16,9 @@ public interface BackendlessAPI {
     String API_URL = BASE_URL + "services/api1/";
 //    String IMAGES_FOLDER = "memes";
 //    String IMAGES_URL = BASE_URL + "files/" + IMAGES_FOLDER + "/";
-    int DEFAULT_PAGE_SIZE = 10;
+    int DEFAULT_PAGE_SIZE = 20;
 
-    Call<List<Project>> getAllProjects(int offset, int count);
+    Call<List<Project>> getProjects(int offset, int count);
 
     Call<Project> getProject(String projectId, String userId);
 

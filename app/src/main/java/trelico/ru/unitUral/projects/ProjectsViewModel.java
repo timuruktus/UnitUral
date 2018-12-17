@@ -6,15 +6,16 @@ import java.util.concurrent.Executors;
 import javax.inject.Inject;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.paging.PagedList;
 import trelico.ru.unitUral.models.CustomResponse;
+import trelico.ru.unitUral.models.local.LoadingState;
 import trelico.ru.unitUral.models.web.Project;
 import trelico.ru.unitUral.repositories.ProjectsRepository;
 import trelico.ru.unitUral.utils.MainThreadExecutor;
 
-import static trelico.ru.unitUral.dataSources.web.BackendlessAPI.DEFAULT_PAGE_SIZE;
+import static trelico.ru.unitUral.dataProviders.web.BackendlessAPI.DEFAULT_PAGE_SIZE;
 
 public class ProjectsViewModel extends ViewModel {
 
@@ -24,21 +25,6 @@ public class ProjectsViewModel extends ViewModel {
     ProjectsRepository projectsRepository;
     @Inject
     ProjectsDataSource projectsDataSource;
-
-    public LiveData<List<Project>> getAllProjects(int offset, int pageSize) {
-        LiveData<CustomResponse> response = projectsRepository.getAllProjects(offset, pageSize);
-        response.observeForever(customResponse -> {
-            if(customResponse.isError()){
-                response = projectsRepository.getAllProjectsFromCache(offset, pageSize);
-            }
-        });
-
-        LiveData<List<Project>> projects
-        if(response.isError()){
-            response = projectsRepository.getAllProjectsFromCache(offset, pageSize);
-        }
-        return allProjects;
-    }
 
     public ProjectsAdapter getAdapter(){
         return adapter;
@@ -59,5 +45,9 @@ public class ProjectsViewModel extends ViewModel {
         ProjectsDiffUtil projectsDiffUtil = new ProjectsDiffUtil();
         adapter = new ProjectsAdapter(projectsDiffUtil);
         adapter.submitList(pagedList);
+    }
+
+    public LiveData<LoadingState> getLoadingState() {
+        return projectsDataSource.getLoadingState();
     }
 }

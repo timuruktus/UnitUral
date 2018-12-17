@@ -2,11 +2,20 @@ package trelico.ru.unitUral.models;
 
 import androidx.lifecycle.LiveData;
 
-public class CustomResponse {
+public class CustomResponse<T> {
 
     private boolean isError = false;
     private String errorText;
-    private Object data;
+    private T data;
+    private boolean isFromWeb;
+
+    public boolean isFromWeb() {
+        return isFromWeb;
+    }
+
+    public void setFromWeb(boolean fromWeb) {
+        isFromWeb = fromWeb;
+    }
 
     public boolean isError() {
         return isError;
@@ -24,11 +33,11 @@ public class CustomResponse {
         this.errorText = errorText;
     }
 
-    public Object getData() {
+    public T getData() {
         return data;
     }
 
-    public void setData(Object data) {
+    public void setData(T data) {
         this.data = data;
     }
 }

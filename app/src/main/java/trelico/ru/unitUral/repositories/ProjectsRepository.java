@@ -9,7 +9,7 @@ import androidx.lifecycle.MutableLiveData;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import trelico.ru.unitUral.dataSources.web.BackendlessAPI;
+import trelico.ru.unitUral.dataProviders.web.BackendlessAPI;
 import trelico.ru.unitUral.models.CustomResponse;
 import trelico.ru.unitUral.models.web.Project;
 
@@ -20,9 +20,9 @@ public class ProjectsRepository {
     BackendlessAPI backendlessAPI;
 
 
-    public MutableLiveData<CustomResponse> getAllProjects(int offset, int pageSize){
+    public LiveData<CustomResponse> getAllProjects(int offset, int pageSize){
         MutableLiveData<CustomResponse> data = new MutableLiveData<>();
-        backendlessAPI.getAllProjects(offset, pageSize).enqueue(new Callback<List<Project>>() {
+        backendlessAPI.getProjects(offset, pageSize).enqueue(new Callback<List<Project>>() {
             @Override
             public void onResponse(Call<List<Project>> call, Response<List<Project>> response) {
                 if(response.body() == null){
@@ -48,7 +48,7 @@ public class ProjectsRepository {
 
     public MutableLiveData<CustomResponse> getAllProjectsFromCache(int offset, int pageSize){
         MutableLiveData<CustomResponse> data = new MutableLiveData<>();
-        backendlessAPI.getAllProjects(offset, pageSize).enqueue(new Callback<List<Project>>() {
+        backendlessAPI.getProjects(offset, pageSize).enqueue(new Callback<List<Project>>() {
             @Override
             public void onResponse(Call<List<Project>> call, Response<List<Project>> response) {
                 if(response.body() == null) onFailure(call, new Throwable());

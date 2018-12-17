@@ -1,4 +1,4 @@
-package trelico.ru.unitUral.dataSources.local;
+package trelico.ru.unitUral.dataProviders.local;
 
 import android.content.Context;
 import android.content.SharedPreferences;

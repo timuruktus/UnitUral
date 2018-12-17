@@ -4,6 +4,7 @@ import toothpick.Scope;
 import toothpick.Toothpick;
 import trelico.ru.unitUral.MyApplication;
 import trelico.ru.unitUral.di.modules.AppModule;
+import trelico.ru.unitUral.di.modules.ProjectsModule;
 import trelico.ru.unitUral.main.MainActivity;
 import trelico.ru.unitUral.projects.ProjectsFragment;
 
@@ -22,5 +23,6 @@ public class ScopeStorage {
 
         projectsScope = Toothpick.openScope(new Object[]{MyApplication.SCOPE_NAME,
                 MainActivity.SCOPE_NAME, ProjectsFragment.SCOPE_NAME});
+        projectsScope.installModules(new ProjectsModule());
     }
 }

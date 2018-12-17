@@ -1,11 +1,23 @@
 package trelico.ru.unitUral.models.web;
 
+import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.Index;
+import androidx.room.PrimaryKey;
+
+@Entity
 public class User {
 
 
+    public static final String TABLE_NAME = "user";
+    @PrimaryKey
+    @ColumnInfo(index = true)
+    @NonNull
     private String email;
     private String name;
     private String role;
+    @ColumnInfo(name = "is_leader")
     private boolean isLeader;
 
     public User(String email, String name, String role, boolean isLeader) {

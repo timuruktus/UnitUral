@@ -2,15 +2,26 @@ package trelico.ru.unitUral.models.web;
 
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
+@Entity
 public class Project {
 
+    public static final String TABLE_NAME = "project";
     private String description;
+    @PrimaryKey
+    @NonNull
+    @ColumnInfo(index = true)
     private String id;
     private String name;
+    @ColumnInfo(name = "is_able_to_edit")
     private boolean isAbleToEdit;
     private List<User> users;
+    @ColumnInfo(name = "team_name")
     private String teamName;
     private long created;
     private long updated;

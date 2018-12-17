@@ -12,7 +12,7 @@ import trelico.ru.unitUral.models.web.Project;
 public class ProjectsAdapter extends PagedListAdapter<Project, ProjectsAdapter.ProjectsViewHolder> {
 
 
-    protected ProjectsAdapter(@NonNull DiffUtil.ItemCallback diffCallback) {
+    protected ProjectsAdapter(@NonNull DiffUtil.ItemCallback<Project> diffCallback) {
         super(diffCallback);
 
     }

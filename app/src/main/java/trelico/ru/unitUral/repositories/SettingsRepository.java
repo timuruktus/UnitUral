@@ -4,7 +4,7 @@ import javax.inject.Inject;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import trelico.ru.unitUral.dataSources.local.Settings;
+import trelico.ru.unitUral.dataProviders.local.Settings;
 
 public class SettingsRepository implements ISettingsRepository {
 

@@ -1,7 +1,5 @@
 package trelico.ru.unitUral.main;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.widget.FrameLayout;
 
@@ -14,9 +12,9 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import ru.terrakok.cicerone.Navigator;
+import toothpick.Toothpick;
 import trelico.ru.unitUral.R;
 import trelico.ru.unitUral.MyApplication;
-import trelico.ru.unitUral.di.Injector;
 import trelico.ru.unitUral.navigation.MainNavigator;
 import trelico.ru.unitUral.navigation.Screens;
 import trelico.ru.unitUral.repositories.ISettingsRepository;
@@ -43,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
 
                         return true;
                     case R.id.navigation_projects:
-
                         MyApplication.INSTANCE.getRouter().navigateTo(new Screens.ProjectsScreen());
                         return true;
                     case R.id.navigation_settings:
@@ -62,13 +59,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-        Injector injector = MyApplication.INSTANCE.getInjector();
-        injector.inject(this);
-
-        // ATTENTION: This was auto-generated to handle app links.
-        Intent appLinkIntent = getIntent();
-        String appLinkAction = appLinkIntent.getAction();
-        Uri appLinkData = appLinkIntent.getData();
+        Toothpick.inject(this, MyApplication.INSTANCE.getScopeStorage().mainActivityScope);
+        MyApplication.INSTANCE.getRouter().navigateTo(new Screens.ProjectsScreen());
     }
 
 

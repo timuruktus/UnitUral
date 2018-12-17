@@ -10,6 +10,7 @@
     <!--USUAL WORDS-->
     <string name="repeat">Повторить</string>
     <string name="data_fetch_error">Ошибка при загрузке данных</string>
+    <string name="no_internet_connection">Проблемы с интернет соединением</string>
 
     <!--FEED LENT-->
     <string name="unit_ural"> Юн-IT Урал</string>
