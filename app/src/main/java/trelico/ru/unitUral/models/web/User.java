@@ -19,6 +19,8 @@ public class User {
     private String role;
     @ColumnInfo(name = "is_leader")
     private boolean isLeader;
+    @ColumnInfo(name = "project_id")
+    private String projectId;
 
     public User(String email, String name, String role, boolean isLeader) {
         this.email = email;

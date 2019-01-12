@@ -9,6 +9,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import androidx.annotation.NonNull;
@@ -22,14 +24,20 @@ import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import ru.surfstudio.android.easyadapter.EasyAdapter;
+import ru.surfstudio.android.easyadapter.ItemList;
 import toothpick.Toothpick;
 import trelico.ru.unitUral.MyApplication;
 import trelico.ru.unitUral.R;
+import trelico.ru.unitUral.models.CustomResponse;
+import trelico.ru.unitUral.models.local.DataSourceType;
 import trelico.ru.unitUral.models.local.InternetConnection;
-import trelico.ru.unitUral.models.local.LoadingState;
+import trelico.ru.unitUral.models.web.Project;
 import trelico.ru.unitUral.repositories.PhoneInfoRepository;
 
 public class ProjectsFragment extends Fragment {
+
+    public static String SCOPE_NAME = "projectsScope";
 
     @BindView(R.id.progressBar)
     ProgressBar progressBar;
@@ -43,10 +51,11 @@ public class ProjectsFragment extends Fragment {
     ConstraintLayout errorLayout;
     @BindView(R.id.projectsLent)
     RecyclerView projectsLent;
-    private Unbinder unbinder;
 
+    private Unbinder unbinder;
+    private EasyAdapter adapter;
     private ProjectsViewModel viewModel;
-    public static String SCOPE_NAME = "projectsScope";
+    private ProjectsItemController projectsItemController;
     @Inject
     PhoneInfoRepository phoneInfoRepository;
     LiveData<InternetConnection> internetStateLiveData;
@@ -72,36 +81,80 @@ public class ProjectsFragment extends Fragment {
         Toothpick.inject(viewModel, MyApplication.INSTANCE.getScopeStorage().projectsScope);
         internetStateLiveData = phoneInfoRepository.getInternetConnectionLiveData();
         viewModel.configureAdapter();
-        viewModel.getLoadingState().observe(this, getLoadingStateObserver());
-
+//        viewModel.getLoadingState().observe(this, getLoadingStateObserver());
+        viewModel.getProjects().observe(this, new ProjectsObserver());
+        adapter = new EasyAdapter();
     }
 
-    private Observer<LoadingState> getLoadingStateObserver(){
-        return o -> {
-            InternetConnection internetState = internetStateLiveData.getValue();
-            if(o == LoadingState.LOADING_INITIAL){
-                errorLayout.setVisibility(View.INVISIBLE);
-                projectsLent.setVisibility(View.INVISIBLE);
-                progressBar.setVisibility(View.VISIBLE);
-            }else if(o == LoadingState.ERROR_FROM_WEB || o == LoadingState.ERROR_INITIAL_FROM_WEB){
-                if(internetState == InternetConnection.NOTHING){
-                    Toast.makeText(this.getContext(), R.string.no_internet_connection, Toast.LENGTH_SHORT).show();
-                }else{
-                    Toast.makeText(this.getContext(), R.string.data_fetch_error, Toast.LENGTH_SHORT).show();
-                }
-            }else if(o == LoadingState.ERROR_FROM_LOCAL){
-                Toast.makeText(this.getContext(), R.string.data_fetch_error, Toast.LENGTH_SHORT).show();
-            }else if(o == LoadingState.ERROR_INITIAL_FROM_LOCAL){
-                errorLayout.setVisibility(View.VISIBLE);
-                projectsLent.setVisibility(View.INVISIBLE);
-                progressBar.setVisibility(View.INVISIBLE);
-            }else if(o == LoadingState.FINISHED_INITIAL){
-                errorLayout.setVisibility(View.INVISIBLE);
-                projectsLent.setVisibility(View.VISIBLE);
-                progressBar.setVisibility(View.INVISIBLE);
+
+    private class ProjectsObserver implements Observer<CustomResponse<List<Project>>>{
+        @Override
+        public void onChanged(CustomResponse<List<Project>> customResponse){
+            if(customResponse == null){
+                showInitialLayout();
             }
+            changeMainScreenLayout(customResponse.getDataSourceType());
+            ItemList items = ItemList.create()
+                    .addAll(customResponse.getData(), ProjectsItemController.create(getProjectClickListener()));
+            adapter.setItems(items);
+        }
+    }
+
+    private View.OnClickListener getProjectClickListener(){
+        return v -> {
+            //TODO
         };
     }
+
+    private void changeMainScreenLayout(DataSourceType dataSourceType){
+        if(dataSourceType == DataSourceType.CACHE){
+            Toast.makeText(this.getContext(), R.string.no_internet_connection, Toast.LENGTH_SHORT).show();
+        }else if(dataSourceType == DataSourceType.ERROR){
+            showErrorLayout();
+        }else{
+            showProjectsLayout();
+        }
+    }
+
+    private void showErrorLayout(){
+        errorLayout.setVisibility(View.VISIBLE);
+        projectsLent.setVisibility(View.INVISIBLE);
+        progressBar.setVisibility(View.INVISIBLE);
+    }
+
+    private void showInitialLayout(){
+        errorLayout.setVisibility(View.INVISIBLE);
+        projectsLent.setVisibility(View.INVISIBLE);
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
+    private void showProjectsLayout(){
+        errorLayout.setVisibility(View.INVISIBLE);
+        projectsLent.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.INVISIBLE);
+    }
+
+//    private Observer<LoadingState> getLoadingStateObserver(){
+//        return o -> {
+//            InternetConnection internetState = internetStateLiveData.getValue();
+//            if(o == LoadingState.LOADING_INITIAL){
+//                showInitialLayout();
+//            }else if(o == LoadingState.ERROR_FROM_WEB || o == LoadingState.ERROR_INITIAL_FROM_WEB){
+//                if(internetState == InternetConnection.NOTHING){
+//                    Toast.makeText(this.getContext(), R.string.no_internet_connection, Toast.LENGTH_SHORT).show();
+//                }else{
+//                    Toast.makeText(this.getContext(), R.string.data_fetch_error, Toast.LENGTH_SHORT).show();
+//                }
+//            }else if(o == LoadingState.ERROR_FROM_LOCAL){
+//                Toast.makeText(this.getContext(), R.string.data_fetch_error, Toast.LENGTH_SHORT).show();
+//            }else if(o == LoadingState.ERROR_INITIAL_FROM_LOCAL){
+//                showErrorLayout();
+//            }else if(o == LoadingState.FINISHED_INITIAL){
+//                showProjectsLayout();
+//            }
+//        };
+//    }
+
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {

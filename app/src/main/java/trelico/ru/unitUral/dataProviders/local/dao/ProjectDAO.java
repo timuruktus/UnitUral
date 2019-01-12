@@ -25,6 +25,9 @@ public interface ProjectDAO {
     @Query("SELECT * FROM " + Project.TABLE_NAME + " WHERE id = :id")
     Project getById(long id);
 
+    @Query("DELETE FROM " + Project.TABLE_NAME)
+    void deleteAll();
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Project project);
 

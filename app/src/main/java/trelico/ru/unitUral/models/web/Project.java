@@ -20,7 +20,6 @@ public class Project {
     private String name;
     @ColumnInfo(name = "is_able_to_edit")
     private boolean isAbleToEdit;
-    private List<User> users;
     @ColumnInfo(name = "team_name")
     private String teamName;
     private long created;

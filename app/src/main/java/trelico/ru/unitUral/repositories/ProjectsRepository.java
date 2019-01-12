@@ -9,65 +9,62 @@ import androidx.lifecycle.MutableLiveData;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import trelico.ru.unitUral.dataProviders.local.db.AppDatabase;
 import trelico.ru.unitUral.dataProviders.web.BackendlessAPI;
 import trelico.ru.unitUral.models.CustomResponse;
+import trelico.ru.unitUral.models.local.DataSourceType;
 import trelico.ru.unitUral.models.web.Project;
 
-public class ProjectsRepository {
+public class ProjectsRepository{
 
 
     @Inject
     BackendlessAPI backendlessAPI;
+    @Inject
+    AppDatabase appDatabase;
 
-
-    public LiveData<CustomResponse> getAllProjects(int offset, int pageSize){
-        MutableLiveData<CustomResponse> data = new MutableLiveData<>();
-        backendlessAPI.getProjects(offset, pageSize).enqueue(new Callback<List<Project>>() {
+    public MutableLiveData<CustomResponse<List<Project>>> getProjects(int offset, int pageSize){
+        MutableLiveData<CustomResponse<List<Project>>> responseData = new MutableLiveData<>();
+        backendlessAPI.getProjects(offset, pageSize).enqueue(new Callback<List<Project>>(){
             @Override
-            public void onResponse(Call<List<Project>> call, Response<List<Project>> response) {
+            public void onResponse(Call<List<Project>> call, Response<List<Project>> response){
                 if(response.body() == null){
                     onFailure(call, new Throwable());
-                }else{
-                    CustomResponse customResponse = new CustomResponse();
+                } else{
+                    CustomResponse<List<Project>> customResponse = new CustomResponse<>();
                     customResponse.setData(response.body());
-                    data.setValue(customResponse);
+                    customResponse.setDataSourceType(DataSourceType.WEB);
+                    responseData.setValue(customResponse);
                     cacheProjects(response.body());
                 }
             }
 
             @Override
-            public void onFailure(Call<List<Project>> call, Throwable t) {
-                CustomResponse response = new CustomResponse();
-                response.setError(true);
-                response.setErrorText(t.getMessage());
-                data.setValue(response);
+            public void onFailure(Call<List<Project>> call, Throwable t){
+                CustomResponse<List<Project>> customResponse = new CustomResponse<>();
+                List<Project> data = getProjectsFromCache(offset, pageSize);
+                if(offset == 0 && data.size() == 0){
+                    customResponse.setDataSourceType(DataSourceType.ERROR);
+                    customResponse.setErrorText(t.getMessage());
+                }else{
+                    customResponse.setDataSourceType(DataSourceType.CACHE);
+                    customResponse.setData(data);
+                }
+                responseData.setValue(customResponse);
             }
         });
-        return data;
+        return responseData;
     }
 
-    public MutableLiveData<CustomResponse> getAllProjectsFromCache(int offset, int pageSize){
-        MutableLiveData<CustomResponse> data = new MutableLiveData<>();
-        backendlessAPI.getProjects(offset, pageSize).enqueue(new Callback<List<Project>>() {
-            @Override
-            public void onResponse(Call<List<Project>> call, Response<List<Project>> response) {
-                if(response.body() == null) onFailure(call, new Throwable());
-
-            }
-
-            @Override
-            public void onFailure(Call<List<Project>> call, Throwable t) {
-
-            }
-        });
-        return data;
+    private List<Project> getProjectsFromCache(int offset, int pageSize){
+        return appDatabase.projectDAO().getProjectsOffset(offset, pageSize);
     }
 
 
     public void cacheProjects(List<Project> projects){
-
+        appDatabase.projectDAO().deleteAll();
+        appDatabase.projectDAO().insertList(projects);
     }
-
 
 
 }

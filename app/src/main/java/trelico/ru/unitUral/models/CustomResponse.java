@@ -1,28 +1,23 @@
 package trelico.ru.unitUral.models;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
+import trelico.ru.unitUral.models.local.DataSourceType;
 
 public class CustomResponse<T> {
 
-    private boolean isError = false;
     private String errorText;
     private T data;
-    private boolean isFromWeb;
+    @NonNull
+    private DataSourceType dataSourceType;
 
-    public boolean isFromWeb() {
-        return isFromWeb;
+    @NonNull
+    public DataSourceType getDataSourceType(){
+        return dataSourceType;
     }
 
-    public void setFromWeb(boolean fromWeb) {
-        isFromWeb = fromWeb;
-    }
-
-    public boolean isError() {
-        return isError;
-    }
-
-    public void setError(boolean error) {
-        isError = error;
+    public void setDataSourceType(@NonNull DataSourceType dataSourceType){
+        this.dataSourceType = dataSourceType;
     }
 
     public String getErrorText() {

@@ -60,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         Toothpick.inject(this, MyApplication.INSTANCE.getScopeStorage().mainActivityScope);
+        //TODO: add if(auth) open project screen else open join screen
         MyApplication.INSTANCE.getRouter().navigateTo(new Screens.ProjectsScreen());
     }
 
