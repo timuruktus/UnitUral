@@ -3,7 +3,7 @@ package trelico.ru.unitUral.projects;
 import java.util.List;
 
 import androidx.recyclerview.widget.DiffUtil;
-import trelico.ru.unitUral.models.web.Project;
+import trelico.ru.unitUral.models.modelObjects.Project;
 
 public class ProjectsDiffUtil extends DiffUtil.Callback{
 

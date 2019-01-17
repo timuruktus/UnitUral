@@ -4,16 +4,15 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import trelico.ru.unitUral.dataProviders.local.db.AppDatabase;
 import trelico.ru.unitUral.dataProviders.web.BackendlessAPI;
-import trelico.ru.unitUral.models.CustomResponse;
 import trelico.ru.unitUral.models.local.DataSourceType;
-import trelico.ru.unitUral.models.web.Project;
+import trelico.ru.unitUral.models.modelObjects.CustomResponse;
+import trelico.ru.unitUral.models.modelObjects.Project;
 
 public class ProjectsRepository{
 

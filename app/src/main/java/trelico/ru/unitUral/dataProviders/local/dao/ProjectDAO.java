@@ -8,7 +8,7 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
-import trelico.ru.unitUral.models.web.Project;
+import trelico.ru.unitUral.models.modelObjects.Project;
 
 @Dao
 public interface ProjectDAO {

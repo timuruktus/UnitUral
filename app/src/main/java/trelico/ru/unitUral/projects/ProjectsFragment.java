@@ -4,9 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
@@ -15,59 +12,62 @@ import javax.inject.Inject;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.widget.ContentLoadingProgressBar;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import ru.surfstudio.android.easyadapter.EasyAdapter;
-import ru.surfstudio.android.easyadapter.ItemList;
 import toothpick.Toothpick;
 import trelico.ru.unitUral.MyApplication;
 import trelico.ru.unitUral.R;
-import trelico.ru.unitUral.models.CustomResponse;
 import trelico.ru.unitUral.models.local.DataSourceType;
 import trelico.ru.unitUral.models.local.InternetConnection;
-import trelico.ru.unitUral.models.web.Project;
+import trelico.ru.unitUral.models.modelObjects.CustomResponse;
+import trelico.ru.unitUral.models.modelObjects.Project;
 import trelico.ru.unitUral.repositories.PhoneInfoRepository;
 
-public class ProjectsFragment extends Fragment {
+public class ProjectsFragment extends Fragment{
 
     public static String SCOPE_NAME = "projectsScope";
-
     @BindView(R.id.progressBar)
-    ProgressBar progressBar;
+    ContentLoadingProgressBar progressBar;
     @BindView(R.id.errorIcon)
-    ImageView errorIcon;
+    AppCompatImageView errorIcon;
     @BindView(R.id.errorText)
-    TextView errorText;
+    AppCompatTextView errorText;
     @BindView(R.id.repeat)
-    TextView repeat;
+    AppCompatTextView repeat;
     @BindView(R.id.errorLayout)
     ConstraintLayout errorLayout;
     @BindView(R.id.projectsLent)
     RecyclerView projectsLent;
+    @BindView(R.id.refreshLayout)
+    SwipeRefreshLayout refreshLayout;
+
 
     private Unbinder unbinder;
-    private EasyAdapter adapter;
     private ProjectsViewModel viewModel;
-    private ProjectsItemController projectsItemController;
     @Inject
     PhoneInfoRepository phoneInfoRepository;
     LiveData<InternetConnection> internetStateLiveData;
 
 
-    public static ProjectsFragment newInstance() {
+    public static ProjectsFragment newInstance(){
         return new ProjectsFragment();
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+                             @Nullable Bundle savedInstanceState){
         Toothpick.inject(this, MyApplication.INSTANCE.getScopeStorage().projectsScope);
         View view = inflater.inflate(R.layout.projects_fragment, container, false);
         unbinder = ButterKnife.bind(this, view);
@@ -75,15 +75,14 @@ public class ProjectsFragment extends Fragment {
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+    public void onActivityCreated(@Nullable Bundle savedInstanceState){
         super.onActivityCreated(savedInstanceState);
         viewModel = ViewModelProviders.of(this).get(ProjectsViewModel.class);
         Toothpick.inject(viewModel, MyApplication.INSTANCE.getScopeStorage().projectsScope);
         internetStateLiveData = phoneInfoRepository.getInternetConnectionLiveData();
         viewModel.configureAdapter();
 //        viewModel.getLoadingState().observe(this, getLoadingStateObserver());
-        viewModel.getProjects().observe(this, new ProjectsObserver());
-        adapter = new EasyAdapter();
+        viewModel.getProjectsLiveData().observe(this, new ProjectsObserver());
     }
 
 
@@ -94,24 +93,23 @@ public class ProjectsFragment extends Fragment {
                 showInitialLayout();
             }
             changeMainScreenLayout(customResponse.getDataSourceType());
-            ItemList items = ItemList.create()
-                    .addAll(customResponse.getData(), ProjectsItemController.create(getProjectClickListener()));
-            adapter.setItems(items);
+            List<Project> oldData = viewModel.getAdapter().getData();
+            List<Project> newData = customResponse.getData();
+            ProjectsDiffUtil projectDiffUtil = new ProjectsDiffUtil(oldData, newData);
+            DiffUtil.DiffResult productDiffResult = DiffUtil.calculateDiff(projectDiffUtil);
+
+            viewModel.getAdapter().updateData(newData);
+            productDiffResult.dispatchUpdatesTo(viewModel.getAdapter());
         }
     }
 
-    private View.OnClickListener getProjectClickListener(){
-        return v -> {
-            //TODO
-        };
-    }
 
     private void changeMainScreenLayout(DataSourceType dataSourceType){
         if(dataSourceType == DataSourceType.CACHE){
             Toast.makeText(this.getContext(), R.string.no_internet_connection, Toast.LENGTH_SHORT).show();
-        }else if(dataSourceType == DataSourceType.ERROR){
+        } else if(dataSourceType == DataSourceType.ERROR){
             showErrorLayout();
-        }else{
+        } else{
             showProjectsLayout();
         }
     }
@@ -157,14 +155,16 @@ public class ProjectsFragment extends Fragment {
 
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState){
         super.onViewCreated(view, savedInstanceState);
         projectsLent.setAdapter(viewModel.getAdapter());
     }
 
     @Override
-    public void onDestroyView() {
+    public void onDestroyView(){
         unbinder.unbind();
         super.onDestroyView();
     }
+
+
 }

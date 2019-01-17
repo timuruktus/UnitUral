@@ -4,7 +4,7 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
-import trelico.ru.unitUral.models.web.Project;
+import trelico.ru.unitUral.models.modelObjects.Project;
 
 public interface BackendlessAPI {
 

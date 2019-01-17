@@ -1,6 +1,6 @@
 package trelico.ru.unitUral.utils;
 
-import trelico.ru.unitUral.models.CustomResponse;
+import trelico.ru.unitUral.models.modelObjects.CustomResponse;
 
 public interface BaseRepository {
 

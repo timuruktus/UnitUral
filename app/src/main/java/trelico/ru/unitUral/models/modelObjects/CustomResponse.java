@@ -1,7 +1,6 @@
-package trelico.ru.unitUral.models;
+package trelico.ru.unitUral.models.modelObjects;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.LiveData;
 import trelico.ru.unitUral.models.local.DataSourceType;
 
 public class CustomResponse<T> {

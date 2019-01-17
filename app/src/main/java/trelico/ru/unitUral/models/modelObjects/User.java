@@ -1,13 +1,15 @@
-package trelico.ru.unitUral.models.web;
+package trelico.ru.unitUral.models.modelObjects;
+
+import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
-import androidx.room.Index;
 import androidx.room.PrimaryKey;
+import trelico.ru.unitUral.models.interfaces.RecyclerItem;
 
 @Entity
-public class User {
+public class User implements RecyclerItem{
 
 
     public static final String TABLE_NAME = "user";
@@ -63,4 +65,30 @@ public class User {
     public void setLeader(boolean leader) {
         isLeader = leader;
     }
+
+    public String getProjectId(){
+        return projectId;
+    }
+
+    public void setProjectId(String projectId){
+        this.projectId = projectId;
+    }
+
+    @Override
+    public boolean equals(Object o){
+        if(this == o) return true;
+        if(!(o instanceof User)) return false;
+        User user = (User) o;
+        return isLeader == user.isLeader &&
+                Objects.equals(email, user.email) &&
+                Objects.equals(name, user.name) &&
+                Objects.equals(role, user.role) &&
+                Objects.equals(projectId, user.projectId);
+    }
+
+    @Override
+    public int hashCode(){
+        return Objects.hash(email, name, role, isLeader, projectId);
+    }
+
 }
