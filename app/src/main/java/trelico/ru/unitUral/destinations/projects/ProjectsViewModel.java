@@ -1,6 +1,7 @@
-package trelico.ru.unitUral.projects;
+package trelico.ru.unitUral.destinations.projects;
 
 import android.app.Application;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,7 @@ import trelico.ru.unitUral.models.modelObjects.CustomResponse;
 import trelico.ru.unitUral.models.modelObjects.Project;
 import trelico.ru.unitUral.repositories.ProjectsRepository;
 
+import static trelico.ru.unitUral.MyApplication.TAG;
 import static trelico.ru.unitUral.dataProviders.web.BackendlessAPI.DEFAULT_PAGE_SIZE;
 
 public class ProjectsViewModel extends AndroidViewModel{
@@ -36,17 +38,23 @@ public class ProjectsViewModel extends AndroidViewModel{
     }
 
     LiveData<CustomResponse<List<Project>>> getProjectsLiveData(){
+        Log.d(TAG, "getProjectsLiveData in ProjectsViewModel");
         if(projectsLiveData == null){
+            Toothpick.inject(projectsRepository, MyApplication.INSTANCE.getScopeStorage().projectsScope);
             projectsLiveData = projectsRepository.getProjects(0, DEFAULT_PAGE_SIZE);
         }
         return projectsLiveData;
     }
 
     void loadMoreData(int offset, int pageSize){
+        Log.d(TAG, "loadMoreData in ProjectsViewModel");
         LiveData<CustomResponse<List<Project>>> newData = projectsRepository.getProjects(offset, pageSize);
         newData.observeForever(customResponse ->{
             List<Project> newProjects = customResponse.getData();
             List<Project> oldProjects = projectsLiveData.getValue().getData();
+            if(offset < oldProjects.size()){
+                oldProjects.clear();
+            }
             oldProjects.addAll(newProjects);
             customResponse.setData(oldProjects);
             projectsLiveData.setValue(customResponse);
@@ -60,6 +68,7 @@ public class ProjectsViewModel extends AndroidViewModel{
             Toothpick.inject(adapter, MyApplication.INSTANCE.getScopeStorage().projectsScope);
             configureAdapter();
         }
+        Log.d(TAG, "getAdapter in ProjectsViewModel");
         return adapter;
     }
 

@@ -26,12 +26,13 @@ public class Project implements RecyclerItem{
     private String teamName;
     private long created;
     private long updated;
-    private long color;
+    private int color;
 
     public Project(){
     }
 
-    public Project(String description, String id, String name, boolean isAbleToEdit, List<User> users, String teamName, long created, long updated, long color){
+    public Project(String description, String id, String name, boolean isAbleToEdit,
+                   List<User> users, String teamName, long created, long updated, int color){
         this.description = description;
         this.id = id;
         this.name = name;
@@ -98,11 +99,11 @@ public class Project implements RecyclerItem{
         this.teamName = teamName;
     }
 
-    public long getColor(){
+    public int getColor(){
         return color;
     }
 
-    public void setColor(long color){
+    public void setColor(int color){
         this.color = color;
     }
 

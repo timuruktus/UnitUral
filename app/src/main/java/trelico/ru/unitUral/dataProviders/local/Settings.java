@@ -3,18 +3,13 @@ package trelico.ru.unitUral.dataProviders.local;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import javax.inject.Inject;
-
 public class Settings {
 
     private static SharedPreferences sharedPreferences;
-    @Inject
-    Context context;
     private static final String APP_PREFERENCES = "mySettings";
     private static final String USER_TOKEN = "token";
 
-    public Settings() {
-
+    public Settings(Context context) {
         sharedPreferences = context.getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
     }
 

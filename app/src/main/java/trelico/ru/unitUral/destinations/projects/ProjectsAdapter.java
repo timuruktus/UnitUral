@@ -1,6 +1,7 @@
-package trelico.ru.unitUral.projects;
+package trelico.ru.unitUral.destinations.projects;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,13 +25,15 @@ import trelico.ru.unitUral.models.modelObjects.LoadMoreStub;
 import trelico.ru.unitUral.models.modelObjects.Project;
 import trelico.ru.unitUral.models.viewObjects.LoadMoreViewHolder;
 
+import static trelico.ru.unitUral.MyApplication.TAG;
+
 public class ProjectsAdapter extends RecyclerView.Adapter{
 
     private List<RecyclerItem> data;
     private ProjectAdapterListener projectAdapterListener;
     private boolean isFinalDataSet = false;
     @Inject
-    private Context context;
+    Context context;
     public static final int PROJECT = 1;
     public static final int LOAD_MORE_STUB = 0;
     private static final int ITEMS_BEFORE_LOAD_MORE = 4;
@@ -84,6 +87,7 @@ public class ProjectsAdapter extends RecyclerView.Adapter{
     public void updateData(List<Project> projects){
         data.clear();
         data.addAll(projects);
+        Log.d(TAG, "updateData in ProjectsAdapter");
     }
 
     public void addData(List<Project> projects){
@@ -153,8 +157,11 @@ public class ProjectsAdapter extends RecyclerView.Adapter{
             this.projectClickListener = projectClickListener;
         }
 
-        protected void setData(Project project){
+        void setData(Project project){
             this.project = project;
+            projectTeamName.setText(project.getTeamName());
+            projectColor.setBackgroundColor(project.getColor());
+            projectName.setText(project.getName());
         }
 
         @OnClick(R.id.container)

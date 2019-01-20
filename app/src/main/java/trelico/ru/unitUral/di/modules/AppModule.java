@@ -18,17 +18,17 @@ import static trelico.ru.unitUral.dataProviders.web.BackendlessAPI.BASE_URL;
 
 public class AppModule extends Module {
 
-    private Retrofit backendlessRetrofit = new Retrofit.Builder()
+    private static Retrofit backendlessRetrofit = new Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
-            .build();;
+            .build();
 
 
     public AppModule() {
         bind(Context.class).toInstance(MyApplication.INSTANCE);
         bind(BackendlessAPI.class).toInstance(backendlessRetrofit.create(BackendlessAPI.class));
         bind(ISettingsRepository.class).toInstance(new SettingsRepository());
-        bind(Settings.class).toInstance(new Settings());
+        bind(Settings.class).toInstance(new Settings(MyApplication.INSTANCE));
         bind(PhoneInfoRepository.class).toInstance(new PhoneInfoRepository());
         bind(AppDatabase.class).toInstance(Room.databaseBuilder(MyApplication.INSTANCE,
                 AppDatabase.class, "database").build());

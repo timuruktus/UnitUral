@@ -1,4 +1,4 @@
-package trelico.ru.unitUral.projects;
+package trelico.ru.unitUral.destinations.projects;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -21,6 +21,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
@@ -34,6 +35,8 @@ import trelico.ru.unitUral.models.local.InternetConnection;
 import trelico.ru.unitUral.models.modelObjects.CustomResponse;
 import trelico.ru.unitUral.models.modelObjects.Project;
 import trelico.ru.unitUral.repositories.PhoneInfoRepository;
+
+import static trelico.ru.unitUral.dataProviders.web.BackendlessAPI.DEFAULT_PAGE_SIZE;
 
 public class ProjectsFragment extends Fragment{
 
@@ -77,12 +80,16 @@ public class ProjectsFragment extends Fragment{
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState){
         super.onActivityCreated(savedInstanceState);
+
         viewModel = ViewModelProviders.of(this).get(ProjectsViewModel.class);
         Toothpick.inject(viewModel, MyApplication.INSTANCE.getScopeStorage().projectsScope);
+        projectsLent.setLayoutManager(new LinearLayoutManager(this.getContext()));
+        projectsLent.setAdapter(viewModel.getAdapter());
         internetStateLiveData = phoneInfoRepository.getInternetConnectionLiveData();
         viewModel.configureAdapter();
 //        viewModel.getLoadingState().observe(this, getLoadingStateObserver());
         viewModel.getProjectsLiveData().observe(this, new ProjectsObserver());
+        refreshLayout.setOnRefreshListener(getRefreshListener());
     }
 
 
@@ -97,10 +104,14 @@ public class ProjectsFragment extends Fragment{
             List<Project> newData = customResponse.getData();
             ProjectsDiffUtil projectDiffUtil = new ProjectsDiffUtil(oldData, newData);
             DiffUtil.DiffResult productDiffResult = DiffUtil.calculateDiff(projectDiffUtil);
-
             viewModel.getAdapter().updateData(newData);
             productDiffResult.dispatchUpdatesTo(viewModel.getAdapter());
+            refreshLayout.setRefreshing(false);
         }
+    }
+
+    private SwipeRefreshLayout.OnRefreshListener getRefreshListener(){
+        return () -> viewModel.loadMoreData(0, DEFAULT_PAGE_SIZE);
     }
 
 
@@ -157,7 +168,6 @@ public class ProjectsFragment extends Fragment{
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState){
         super.onViewCreated(view, savedInstanceState);
-        projectsLent.setAdapter(viewModel.getAdapter());
     }
 
     @Override

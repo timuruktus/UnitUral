@@ -18,7 +18,7 @@
         android:name="trelico.ru.unitUral.MyApplication">
 
         <activity
-            android:name="trelico.ru.unitUral.main.MainActivity"
+            android:name=".destinations.main.MainActivity"
             android:label="@string/app_name">
             <tools:validation testUrl="https://www.unit-ural.tech/novosti" />
 

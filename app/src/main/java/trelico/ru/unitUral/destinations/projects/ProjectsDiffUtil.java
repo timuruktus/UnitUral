@@ -1,4 +1,4 @@
-package trelico.ru.unitUral.projects;
+package trelico.ru.unitUral.destinations.projects;
 
 import java.util.List;
 

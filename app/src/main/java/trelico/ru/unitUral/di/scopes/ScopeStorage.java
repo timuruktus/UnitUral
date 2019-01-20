@@ -3,10 +3,10 @@ package trelico.ru.unitUral.di.scopes;
 import toothpick.Scope;
 import toothpick.Toothpick;
 import trelico.ru.unitUral.MyApplication;
+import trelico.ru.unitUral.destinations.main.MainActivity;
+import trelico.ru.unitUral.destinations.projects.ProjectsFragment;
 import trelico.ru.unitUral.di.modules.AppModule;
 import trelico.ru.unitUral.di.modules.ProjectsModule;
-import trelico.ru.unitUral.main.MainActivity;
-import trelico.ru.unitUral.projects.ProjectsFragment;
 
 public class ScopeStorage {
 
@@ -18,11 +18,11 @@ public class ScopeStorage {
         applicationScope = Toothpick.openScope(MyApplication.SCOPE_NAME);
         applicationScope.installModules(new AppModule());
 
-        mainActivityScope = Toothpick.openScope(new Object[]{MyApplication.SCOPE_NAME, MainActivity.SCOPE_NAME});
+        mainActivityScope = Toothpick.openScopes(MyApplication.SCOPE_NAME, MainActivity.SCOPE_NAME);
         mainActivityScope.installModules();
 
-        projectsScope = Toothpick.openScope(new Object[]{MyApplication.SCOPE_NAME,
-                MainActivity.SCOPE_NAME, ProjectsFragment.SCOPE_NAME});
+        projectsScope = Toothpick.openScopes(MyApplication.SCOPE_NAME,
+                MainActivity.SCOPE_NAME, ProjectsFragment.SCOPE_NAME);
         projectsScope.installModules(new ProjectsModule());
     }
 }

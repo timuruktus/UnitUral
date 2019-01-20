@@ -36,7 +36,7 @@ public interface UserDAO {
     int update(User user);
 
     @Update
-    int[] updateList(List<User> users);
+    int updateList(List<User> users);
 
     @Delete
     void delete(User user);

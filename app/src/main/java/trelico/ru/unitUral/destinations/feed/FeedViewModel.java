@@ -1,4 +1,4 @@
-package trelico.ru.unitUral.feed;
+package trelico.ru.unitUral.destinations.feed;
 
 import androidx.lifecycle.ViewModel;
 

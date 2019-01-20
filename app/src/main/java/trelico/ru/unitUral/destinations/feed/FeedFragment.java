@@ -1,17 +1,14 @@
-package trelico.ru.unitUral.feed;
-
-import androidx.lifecycle.ViewModelProviders;
+package trelico.ru.unitUral.destinations.feed;
 
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
 import trelico.ru.unitUral.R;
 
 public class FeedFragment extends Fragment {
